@@ -9,8 +9,7 @@ use Sportmonks\Football\Exception\InvalidDateFormatException;
  * Class FootballApiHelper
  * @package Sportmonks\Football
  */
-class FootballApiHelper
-{
+class FootballApiHelper {
     /**
      * @param string $date
      * @param string $format
@@ -22,7 +21,10 @@ class FootballApiHelper
         $dateTime = DateTime::createFromFormat($format, $date);
 
         // Check for errors
-        $dateTimeErrors = DateTime::getLastErrors();
+        $dateTimeErrors = DateTime::getLastErrors() ?: [
+            'warning_count' => 0,
+            'error_count' => 0
+        ];
 
         // Validate DateTime
         if (!$dateTime || ($dateTimeErrors['warning_count'] + $dateTimeErrors['error_count']) > 0) {
