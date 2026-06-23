@@ -70,14 +70,31 @@ $response = FootballApi::fixtures()
     ->getByDate('2023-03-19');
 ```
 
-Note: The pagination (`$response['pagination']`) can be used to loop through pages and build a result set.
+Note: The pagination (`$response->pagination`) can be used to loop through pages and build a result set.
+
+```php
+// API call for Transfers with cursor pagination
+$response = FootballApi::transfers()
+    ->setFilters(['populate'])
+    ->all();
+
+while ($response->pagination->has_more) {
+    $response = FootballApi::transfers()
+        ->setFilters(['populate'])
+        ->setCursor($response->pagination->next_cursor)
+        ->all();
+}
+```
+
+Use `setCursor()` with `pagination->next_cursor` for deeper pagination. Calling `setCursor()` clears any page value, and calling `setPage()` clears any cursor value, so requests do not send both pagination parameters.
+See the [Sportmonks pagination docs](https://docs.sportmonks.com/v3/tutorials-and-guides/tutorials/introduction/pagination) for more pagination details.
 
 ### Includes
 
 ```php
 // API call for Fixtures with includes
 $response = FootballApi::fixtures()
-    ->setInclude(['scores', 'lineups', 'events'])
+    ->setIncludes(['scores', 'lineups', 'events'])
     ->getByDate('2023-03-19');
 ```
 
@@ -87,7 +104,7 @@ $response = FootballApi::fixtures()
 ```php
 // API call for Fixtures with filters
 $response = FootballApi::fixtures()
-    ->setInclude(['events','statistics.type'])
+    ->setIncludes(['events','statistics.type'])
     ->setFilters(['eventTypes' => [18,14]])
     ->getByDate('2023-03-19');
 ```

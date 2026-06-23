@@ -98,7 +98,23 @@ class FootballClient {
 	 * @return $this
 	 */
 	public function setPage(int $page) {
+		unset($this->query['cursor']);
 		$this->query['page'] = $page;
+		return $this;
+	}
+
+	/**
+	 * @param string|null $cursor
+	 * @return $this
+	 */
+	public function setCursor(?string $cursor) {
+		unset($this->query['page']);
+		unset($this->query['cursor']);
+
+		if ($cursor !== null && $cursor !== '') {
+			$this->query['cursor'] = $cursor;
+		}
+
 		return $this;
 	}
 
