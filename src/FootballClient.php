@@ -111,11 +111,36 @@ class FootballClient {
 		unset($this->query['page']);
 		unset($this->query['cursor']);
 
-		if ($cursor !== null && $cursor !== '') {
+		$cursor = $this->cursorValue($cursor);
+
+		if ($cursor !== null) {
 			$this->query['cursor'] = $cursor;
 		}
 
 		return $this;
+	}
+
+	/**
+	 * @param string|null $cursor
+	 * @return string|null
+	 */
+	protected function cursorValue(?string $cursor) {
+		if ($cursor === null) return null;
+
+		$cursor = trim($cursor);
+		if ($cursor === '') return null;
+
+		if (preg_match('#^https?://#i', $cursor)) {
+			$query = parse_url($cursor, PHP_URL_QUERY);
+			if (is_string($query) && $query !== '') {
+				parse_str($query, $params);
+				if (isset($params['cursor']) && is_string($params['cursor']) && trim($params['cursor']) !== '') {
+					return trim($params['cursor']);
+				}
+			}
+		}
+
+		return $cursor;
 	}
 
 	/**

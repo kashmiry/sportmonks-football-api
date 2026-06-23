@@ -50,6 +50,20 @@ class FootballClientPaginationTest extends TestCase
     /**
      * @test
      */
+    public function testSetCursorExtractsTokenFromSportmonksCursorUrl()
+    {
+        $_ENV['SPORTMONKS_API_TOKEN'] = 'TOKEN';
+        $client = new FootballClient();
+
+        $client->setCursor('https://api.sportmonks.com/v3/football/transfers?filter=populate&cursor=abc');
+        $query = $this->queryFor($client);
+
+        $this->assertSame('abc', $query['cursor']);
+    }
+
+    /**
+     * @test
+     */
     public function testSetCursorNullRemovesCursorAndPage()
     {
         $_ENV['SPORTMONKS_API_TOKEN'] = 'TOKEN';
